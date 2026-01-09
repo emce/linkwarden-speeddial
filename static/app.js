@@ -1,9 +1,19 @@
-// static/app.js (loaded as type="module")
-// Exposes window.fetchJson so non-module scripts (index.js) can use it.
+// =========================
+// Global app helpers
+// Loaded on ALL pages
+// =========================
 
-function lsGet(k, d = "") {
-  try { return localStorage.getItem(k) ?? d; } catch (_) { return d; }
+function lsGet(key, fallback = "") {
+  try {
+    return localStorage.getItem(key) ?? fallback;
+  } catch (_) {
+    return fallback;
+  }
 }
+
+// -------------------------
+// Session restore helpers
+// -------------------------
 
 async function restoreSessionFromLocalStorage() {
   const base_url = lsGet("lw_base_url", "").trim();
@@ -24,12 +34,15 @@ async function restoreSessionFromLocalStorage() {
   }
 }
 
+// -------------------------
+// Fetch wrapper (auto restore)
+// -------------------------
+
 async function fetchJson(url, options = {}) {
   const opts = { credentials: "same-origin", ...options };
 
   let r = await fetch(url, opts);
 
-  // If session expired, try restoring once
   if (r.status === 401) {
     const ok = await restoreSessionFromLocalStorage();
     if (!ok) return { status: 401, data: null };
@@ -37,11 +50,77 @@ async function fetchJson(url, options = {}) {
   }
 
   let data = null;
-  try { data = await r.json(); } catch (_) {}
+  try {
+    data = await r.json();
+  } catch (_) {}
 
   return { status: r.status, data };
 }
 
-// Make it available to non-module scripts
+// Expose for non-module scripts
 window.fetchJson = fetchJson;
 window.restoreSessionFromLocalStorage = restoreSessionFromLocalStorage;
+
+// -------------------------
+// Global sidebar toggle visibility
+// -------------------------
+// - Runs on ALL pages
+// - Keeps space reserved (visibility:hidden)
+// - Hides toggle on pages without sidebar (e.g. Settings)
+// -------------------------
+
+(function () {
+  function updateSidebarToggleVisibility() {
+    const btn = document.getElementById("sidebarToggle");
+    if (!btn) return;
+
+    const sidebarEl = document.getElementById("sidebar");
+
+    // Read setting
+    let showSidebar = false;
+    try {
+      showSidebar = (localStorage.getItem("lw_show_sidebar") || "0") === "1";
+    } catch (_) {
+      showSidebar = false;
+    }
+
+    // Sidebar not present (Settings page)
+    if (!sidebarEl) {
+      btn.style.visibility = "hidden";
+      btn.style.pointerEvents = "none";
+      btn.setAttribute("aria-expanded", "false");
+      return;
+    }
+
+    // Sidebar feature disabled
+    if (!showSidebar) {
+      btn.style.visibility = "hidden";
+      btn.style.pointerEvents = "none";
+      btn.setAttribute("aria-expanded", "false");
+      return;
+    }
+
+    // Sidebar enabled
+    btn.style.visibility = "visible";
+    btn.style.pointerEvents = "auto";
+
+    const isOpen = document.body.classList.contains("sidebar-open");
+    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", updateSidebarToggleVisibility);
+  } else {
+    updateSidebarToggleVisibility();
+  }
+
+  // React to Settings changes across tabs
+  window.addEventListener("storage", (e) => {
+    if (e.key === "lw_show_sidebar" || e.key === "lw_sidebar_open") {
+      updateSidebarToggleVisibility();
+    }
+  });
+
+  // Optional same-tab update hook
+  window.addEventListener("lw:settings-changed", updateSidebarToggleVisibility);
+})();

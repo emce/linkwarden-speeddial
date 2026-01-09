@@ -1,13 +1,12 @@
 // =========================
-// Index page:
+// Index page
 // - Main grid uses collection_id from localStorage (settings)
-// - Sidebar is independent: browse collections/links without affecting main grid
-// - Uses topbar #sidebarToggle (from base.html)
-// No ES modules/imports (works with normal <script> tags)
+// - Sidebar is independent: browse collections/links
+// - Sidebar toggle button is provided by base.html
 // =========================
 
 (function () {
-  // ---------- LocalStorage helpers ----------
+  // ---------- Helpers ----------
   function lsGet(key, fallback) {
     try {
       const v = localStorage.getItem(key);
@@ -18,7 +17,9 @@
   }
 
   function lsSet(key, value) {
-    try { localStorage.setItem(key, String(value)); } catch (_) {}
+    try {
+      localStorage.setItem(key, String(value));
+    } catch (_) {}
   }
 
   function clampInt(v, min, max, fallback) {
@@ -36,7 +37,7 @@
       .replaceAll("'", "&#039;");
   }
 
-  // ---------- Settings keys ----------
+  // ---------- Keys ----------
   const KEYS = {
     theme: "lw_theme",
     cols: "lw_grid_columns",
@@ -47,11 +48,8 @@
     bgUrl: "lw_bg_url",
     bgColor: "lw_bg_color",
     textColor: "lw_text_color",
-
     showSidebar: "lw_show_sidebar",
     sidebarOpen: "lw_sidebar_open",
-
-    // main grid collection (from Settings)
     collectionId: "lw_collection_id",
   };
 
@@ -59,14 +57,15 @@
     return lsGet(KEYS.openNewTab, "1") === "1";
   }
 
-  // ---------- Fetch helper ----------
   async function fetchJson(url, options) {
     if (typeof window.fetchJson === "function") {
       return window.fetchJson(url, options);
     }
     const r = await fetch(url, { credentials: "same-origin", ...(options || {}) });
     let data = null;
-    try { data = await r.json(); } catch (_) {}
+    try {
+      data = await r.json();
+    } catch (_) {}
     return { status: r.status, data };
   }
 
@@ -75,7 +74,7 @@
     if (btn) btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
-  // ---------- Apply prefs to page ----------
+  // ---------- Apply UI prefs ----------
   function applyPrefs() {
     const theme = lsGet(KEYS.theme, "auto");
     const cols = clampInt(lsGet(KEYS.cols, "6"), 4, 12, 6);
@@ -88,72 +87,43 @@
 
     document.body.dataset.theme = theme;
 
-    // Background
     if (bgMode === "color") {
       document.body.style.backgroundImage = "none";
       document.body.style.backgroundColor = bgColor || "#0b0b0d";
-      document.body.style.backgroundSize = "";
-      document.body.style.backgroundPosition = "";
-      document.body.style.backgroundAttachment = "";
     } else {
       document.body.style.backgroundColor = "#0b0b0d";
-      if (bgUrl) {
-        document.body.style.backgroundImage = `url("${bgUrl}")`;
-        document.body.style.backgroundSize = "cover";
-        document.body.style.backgroundPosition = "center";
-        document.body.style.backgroundAttachment = "fixed";
-      } else {
-        document.body.style.backgroundImage = "none";
-        document.body.style.backgroundSize = "";
-        document.body.style.backgroundPosition = "";
-        document.body.style.backgroundAttachment = "";
-      }
+      document.body.style.backgroundImage = bgUrl ? `url("${bgUrl}")` : "none";
+      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundPosition = "center";
+      document.body.style.backgroundAttachment = "fixed";
     }
 
     if (textColor) document.body.style.color = textColor;
     else document.body.style.removeProperty("color");
 
-    // Grid styles
     const grid = document.getElementById("mainGrid");
     if (grid) {
       grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
       grid.style.gap = `${gap}px`;
     }
 
-    // Sidebar visibility (from settings)
     const showSidebar = lsGet(KEYS.showSidebar, "0") === "1";
     const sidebar = document.getElementById("sidebar");
     const layout = document.getElementById("layoutRoot");
-    const toggleBtn = document.getElementById("sidebarToggle");
 
     if (layout) layout.classList.toggle("has-sidebar", showSidebar);
+    if (sidebar) sidebar.style.display = showSidebar ? "block" : "none";
 
-    // If sidebar feature disabled -> hide sidebar and close it
-    if (!showSidebar) {
-      if (sidebar) sidebar.style.display = "none";
-      document.body.classList.remove("sidebar-open");
-      lsSet(KEYS.sidebarOpen, "0");
-      setToggleExpanded(false);
-      if (toggleBtn) toggleBtn.style.display = "none";
-      return;
-    }
-
-    // Feature enabled
-    if (sidebar) sidebar.style.display = "block";
-    if (toggleBtn) toggleBtn.style.display = "inline-flex";
-
-    // Sidebar open/closed state
     const isOpen = lsGet(KEYS.sidebarOpen, "0") === "1";
     document.body.classList.toggle("sidebar-open", isOpen);
     setToggleExpanded(isOpen);
   }
 
-  // ---------- Bind sidebar toggle button (always) ----------
-  function bindSidebarToggleButton() {
+  // ---------- Sidebar toggle ----------
+  function bindSidebarToggle() {
     const btn = document.getElementById("sidebarToggle");
     if (!btn) return;
 
-    // prevent double-binding
     if (btn.dataset.bound === "1") return;
     btn.dataset.bound = "1";
 
@@ -177,8 +147,8 @@
         .localeCompare(String(b.title || b.name || "").toLowerCase());
 
     const byCreated = (a, b) => {
-      const da = Date.parse(a.createdAt || a.created_at || a.created || 0) || 0;
-      const db = Date.parse(b.createdAt || b.created_at || b.created || 0) || 0;
+      const da = Date.parse(a.createdAt || a.created || 0) || 0;
+      const db = Date.parse(b.createdAt || b.created || 0) || 0;
       return da - db;
     };
 
@@ -187,7 +157,6 @@
     else if (mode === "name_desc") out.sort((a, b) => -byName(a, b));
     else if (mode === "date_asc") out.sort(byCreated);
     else out.sort((a, b) => -byCreated(a, b));
-
     return out;
   }
 
@@ -266,7 +235,6 @@
     }
 
     const { status, data } = await fetchJson(`/api/links?collection_id=${encodeURIComponent(collectionId)}`);
-
     if (status !== 200) {
       window.location.href = "/login";
       return;
@@ -276,7 +244,7 @@
     renderMainGrid(sortLinks(arr));
   }
 
-  // ---------- Sidebar (collection browser) ----------
+  // ---------- Sidebar browser ----------
   let collections = [];
   let stack = [];
   let currentId = null;
@@ -339,7 +307,6 @@
 
     if (currentId !== null) {
       const links = await fetchSidebarLinks(currentId);
-
       if (links.length) {
         const sep = document.createElement("div");
         sep.className = "sb-sep";
@@ -419,7 +386,7 @@
 
   // ---------- Boot ----------
   document.addEventListener("DOMContentLoaded", async function () {
-    bindSidebarToggleButton();
+    bindSidebarToggle();
     applyPrefs();
     await loadMainGrid();
     await loadSidebar();

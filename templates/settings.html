@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container narrow">
+  <div class="card">
+    <h2>Settings</h2>
+
+    <form method="post" action="{{ url_for('settings_post') }}">
+
+      <label>
+        Linkwarden URL
+        <input type="text" value="{{ lw_base_url }}" disabled />
+      </label>
+
+      <label>
+        Collection
+        <select name="collection_id">
+          <option value="">-- choose --</option>
+          {% for c in collections %}
+            <option value="{{ c.id }}" {% if selected_collection_id|string == c.id|string %}selected{% endif %}>
+              {{ c.name }} ({{ c._count.links if c._count and c._count.links is not none else 0 }})
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        Grid columns
+        <input type="number" name="grid_columns" min="3" max="12" step="1" value="{{ grid_columns }}" />
+      </label>
+
+      <label>
+        Sorting
+        <select name="sort_mode">
+          <option value="date_desc" {% if sort_mode == 'date_desc' %}selected{% endif %}>Data (od najnowszych)</option>
+          <option value="date_asc" {% if sort_mode == 'date_asc' %}selected{% endif %}>Data (od najstarszych)</option>
+          <option value="name_asc" {% if sort_mode == 'name_asc' %}selected{% endif %}>Nazwa (A–Z)</option>
+          <option value="name_desc" {% if sort_mode == 'name_desc' %}selected{% endif %}>Nazwa (Z–A)</option>
+        </select>
+      </label>
+
+      <label>
+        Wallpaper image URL
+        <input type="text" name="wallpaper_url" value="{{ wallpaper_url }}" placeholder="https://..." />
+      </label>
+
+      <button type="submit">Save</button>
+    </form>
+
+    <p class="muted" style="margin-top:12px;">
+      Pinned items always stay on top; sorting applies inside pinned and non-pinned groups.
+    </p>
+  </div>
+</div>
+{% endblock %}

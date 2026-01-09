@@ -1,0 +1,238 @@
+:root {
+    --bg: rgba(12, 12, 14, 0.72);
+    --card: rgba(20, 20, 24, 0.78);
+    --text: #f3f3f5;
+    --muted: #b7b7bf;
+    --border: rgba(255, 255, 255, 0.12);
+}
+
+body {
+    margin: 0;
+    font-family: "Roboto Condensed", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--text);
+    background: #0b0b0d;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background: var(--bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.nav a {
+    color: var(--text);
+    text-decoration: none;
+    margin-left: 14px;
+    opacity: 0.9;
+}
+
+.nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.container {
+    padding: 22px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.container.narrow {
+    max-width: 520px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+}
+
+label {
+    display: block;
+    margin: 10px 0;
+}
+
+input,
+select {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--text);
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text);
+    cursor: pointer;
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.muted {
+    color: var(--muted);
+}
+
+/* =========================
+   SETTINGS FORM SPACING FIX
+   ========================= */
+
+.card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.card form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;            /* space between label text and input/select */
+  margin-bottom: 14px; /* space between fields */
+}
+
+.card form input,
+.card form select {
+  box-sizing: border-box;
+  height: 42px;        /* consistent control height */
+  line-height: 42px;   /* prevents text clipping / overlap */
+}
+
+.card form button {
+  align-self: flex-start;
+  margin-top: 6px;
+}
+
+/* =========================
+   GRID
+   ========================= */
+
+.grid {
+    display: grid;
+    gap: 14px;
+}
+
+/* =========================
+   TILE (Speed Dial)
+   ========================= */
+
+.tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centers icon + title horizontally */
+    justify-content: flex-start; /* icon stays at the top */
+
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+
+    text-decoration: none;
+    color: var(--text);
+
+    transition: transform 120ms ease, background 120ms ease;
+
+    min-width: 0; /* prevents grid collapse */
+}
+
+.tile:hover {
+    transform: translateY(-2px);
+    background: rgba(24, 24, 28, 0.85);
+}
+
+/* =========================
+   ICON
+   ========================= */
+
+.tile-icon-wrap {
+    width: 64px;
+    height: 64px;
+    padding: 8px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center; /* vertical centering */
+    justify-content: center; /* horizontal centering */
+
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+}
+
+.tile-icon {
+    max-width: 100%;
+    max-height: 100%;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain; /* key for screenshots */
+}
+
+/* =========================
+   TITLE
+   ========================= */
+
+.tile-title {
+    margin-top: 10px;
+    text-align: center;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================
+   FLASH MESSAGES
+   ========================= */
+
+.flash-wrap {
+    margin-bottom: 14px;
+}
+
+.flash {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.flash.error {
+    background: rgba(255, 70, 70, 0.18);
+}
+
+/* =========================
+   HIDE LEGACY ELEMENTS
+   ========================= */
+
+.tile-top,
+.url,
+.favicon,
+.title {
+    display: none;
+}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if not collection_id %}
+  <div class="card">
+    <h2>No collection selected</h2>
+    <p>
+      Pick a Linkwarden collection (folder) in
+      <a href="{{ url_for('settings_get') }}">Settings</a>.
+    </p>
+  </div>
+{% else %}
+  <div class="grid" style="grid-template-columns: repeat({{ grid_columns }}, minmax(0, 1fr));">
+    {% for t in tiles %}
+      <a class="tile"
+         href="{{ t.url }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         title="{{ t.title }}">
+
+        <div class="tile-icon-wrap">
+            <img
+              class="tile-icon"
+              src="{{ t.favicon }}"
+              alt=""
+              loading="lazy"
+            />
+        </div>
+
+        <div class="tile-title">{{ t.title }}</div>
+      </a>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% endblock %}

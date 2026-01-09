@@ -1,37 +1,52 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{{ title or "Linkwarden Speed Dial" }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300..700;1,300..700&display=swap"
-          rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or "Linkwarden Speed Dial" }}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body style="{% if wallpaper_url %}background-image:url('{{ wallpaper_url }}');{% endif %}">
+
+<body data-theme="{{ theme }}"
+      style="
+        {% if bg_mode == 'image' and bg_url %}background-image:url('{{ bg_url }}');{% endif %}
+        {% if bg_mode == 'color' %}background-color:{{ bg_color }};{% endif %}
+        {% if text_color %}color:{{ text_color }};{% endif %}
+      ">
+
 <header class="topbar">
-    <div class="brand">Linkwarden Speed Dial</div>
-    <nav class="nav">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('settings_get') }}">Settings</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </nav>
+  <div class="brand">Linkwarden Speed Dial</div>
+  <nav class="nav">
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('settings_get') }}">Settings</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+  {% if show_sidebar %}
+    <button
+      type="button"
+      id="sidebarToggle"
+      class="sidebar-toggle"
+      aria-label="Toggle bookmarks sidebar"
+      aria-expanded="false">
+      ☰
+    </button>
+  {% endif %}
+  </nav>
 </header>
 
 <main class="container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-wrap">
-                {% for category, message in messages %}
-                    <div class="flash {{ category }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    {% block content %}{% endblock %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, msg in messages %}
+      <div class="flash {{ category }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
 </main>
+{% block scripts %}{% endblock %}
 </body>
 </html>

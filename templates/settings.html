@@ -2,54 +2,175 @@
 
 {% block content %}
 <div class="container narrow">
-  <div class="card">
+  <div class="card settings-card">
     <h2>Settings</h2>
+
+    <div class="tabs">
+      <button type="button" class="tab active" data-tab="general">General</button>
+      <button type="button" class="tab" data-tab="account">Account</button>
+      <button type="button" class="tab" data-tab="appearance">Appearance</button>
+    </div>
 
     <form method="post" action="{{ url_for('settings_post') }}">
 
-      <label>
-        Linkwarden URL
-        <input type="text" value="{{ lw_base_url }}" disabled />
-      </label>
+      <!-- GENERAL -->
+      <section class="panel active" id="tab-general">
+        <label>
+          Theme
+          <select name="theme">
+            <option value="auto" {% if theme == 'auto' %}selected{% endif %}>Auto</option>
+            <option value="light" {% if theme == 'light' %}selected{% endif %}>Light</option>
+            <option value="dark" {% if theme == 'dark' %}selected{% endif %}>Dark</option>
+          </select>
+        </label>
 
-      <label>
-        Collection
-        <select name="collection_id">
-          <option value="">-- choose --</option>
-          {% for c in collections %}
-            <option value="{{ c.id }}" {% if selected_collection_id|string == c.id|string %}selected{% endif %}>
-              {{ c.name }} ({{ c._count.links if c._count and c._count.links is not none else 0 }})
-            </option>
-          {% endfor %}
-        </select>
-      </label>
+        <!-- Columns: label + value on one line -->
+        <label class="range-field">
+          <div class="range-head">
+            <span>Number of columns:</span>
+            <span class="pill" id="colsVal">{{ grid_columns }}</span>
+          </div>
+          <input type="range" name="grid_columns" min="4" max="12" step="1"
+                 value="{{ grid_columns }}"
+                 oninput="colsVal.textContent=this.value">
+        </label>
 
-      <label>
-        Grid columns
-        <input type="number" name="grid_columns" min="3" max="12" step="1" value="{{ grid_columns }}" />
-      </label>
+        <!-- Spacing: label + value on one line -->
+        <label class="range-field">
+          <div class="range-head">
+            <span>Spacing:</span>
+            <span class="pill" id="gapVal">{{ grid_spacing }}</span>
+          </div>
+          <input type="range" name="grid_spacing" min="0" max="32" step="4"
+                 value="{{ grid_spacing }}"
+                 oninput="gapVal.textContent=this.value">
+        </label>
 
-      <label>
-        Sorting
-        <select name="sort_mode">
-          <option value="date_desc" {% if sort_mode == 'date_desc' %}selected{% endif %}>Data (od najnowszych)</option>
-          <option value="date_asc" {% if sort_mode == 'date_asc' %}selected{% endif %}>Data (od najstarszych)</option>
-          <option value="name_asc" {% if sort_mode == 'name_asc' %}selected{% endif %}>Nazwa (A–Z)</option>
-          <option value="name_desc" {% if sort_mode == 'name_desc' %}selected{% endif %}>Nazwa (Z–A)</option>
-        </select>
-      </label>
+        <label class="toggle">
+          <input type="checkbox" name="open_new_tab" value="1"
+                 {% if open_new_tab %}checked{% endif %}>
+          <span class="slider"></span>
+          <span class="toggle-label">Open links in new tab</span>
+        </label>
 
-      <label>
-        Wallpaper image URL
-        <input type="text" name="wallpaper_url" value="{{ wallpaper_url }}" placeholder="https://..." />
-      </label>
+        <label class="toggle">
+          <input type="checkbox" name="show_sidebar" value="1"
+                 {% if show_sidebar %}checked{% endif %}>
+          <span class="slider"></span>
+          <span class="toggle-label">Show bookmarks in sidebar (future)</span>
+        </label>
 
-      <button type="submit">Save</button>
+        <label>
+          Sorting
+          <select name="sort_mode">
+            <option value="date_desc" {% if sort_mode == 'date_desc' %}selected{% endif %}>Date (newest)</option>
+            <option value="date_asc" {% if sort_mode == 'date_asc' %}selected{% endif %}>Date (oldest)</option>
+            <option value="name_asc" {% if sort_mode == 'name_asc' %}selected{% endif %}>Name (A–Z)</option>
+            <option value="name_desc" {% if sort_mode == 'name_desc' %}selected{% endif %}>Name (Z–A)</option>
+          </select>
+        </label>
+      </section>
+
+      <!-- ACCOUNT -->
+      <section class="panel" id="tab-account">
+        <label>
+          Linkwarden URL
+          <input type="text" value="{{ lw_base_url }}" disabled>
+        </label>
+
+        <label>
+          Token
+          <input type="text" name="lw_token" value="{{ lw_token }}" placeholder="Paste API token">
+          <div class="hint">Recommended authentication method.</div>
+        </label>
+
+        <label>
+          Username
+          <input type="text" name="lw_username" value="{{ lw_username }}">
+        </label>
+
+        <label>
+          Password
+          <input type="password" name="lw_password" placeholder="Used only to create token">
+        </label>
+
+        <label>
+          Collection
+          <select name="collection_id">
+            <option value="">-- choose --</option>
+            {% for c in collections %}
+              <option value="{{ c.id }}"
+                {% if selected_collection_id|string == c.id|string %}selected{% endif %}>
+                {{ c.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </label>
+      </section>
+
+      <!-- APPEARANCE -->
+      <section class="panel" id="tab-appearance">
+        <div class="row">
+          <label class="radio">
+            <input type="radio" name="bg_mode" value="image"
+                   {% if bg_mode == 'image' %}checked{% endif %}>
+            Background image
+          </label>
+
+          <label class="radio">
+            <input type="radio" name="bg_mode" value="color"
+                   {% if bg_mode == 'color' %}checked{% endif %}>
+            Background color
+          </label>
+        </div>
+
+        <div id="bgImageFields">
+          <label>
+            Background image URL
+            <input type="text" name="bg_url" value="{{ bg_url }}">
+          </label>
+        </div>
+
+        <div id="bgColorFields">
+          <label>
+            Background color
+            <input type="color" name="bg_color" value="{{ bg_color }}">
+          </label>
+        </div>
+
+        <label>
+          Text color (optional)
+          <input type="color" name="text_color" value="{{ text_color }}">
+        </label>
+      </section>
+
+      <div class="actions">
+        <button type="submit">Save</button>
+      </div>
     </form>
-
-    <p class="muted" style="margin-top:12px;">
-      Pinned items always stay on top; sorting applies inside pinned and non-pinned groups.
-    </p>
   </div>
 </div>
+
+<script>
+  const tabs = document.querySelectorAll(".tab");
+  const panels = document.querySelectorAll(".panel");
+
+  tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      panels.forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  function updateBgMode() {
+    const mode = document.querySelector("input[name=bg_mode]:checked")?.value;
+    document.getElementById("bgImageFields").style.display = mode === "image" ? "block" : "none";
+    document.getElementById("bgColorFields").style.display = mode === "color" ? "block" : "none";
+  }
+
+  document.querySelectorAll("input[name=bg_mode]").forEach(r => r.addEventListener("change", updateBgMode));
+  updateBgMode();
+</script>
 {% endblock %}

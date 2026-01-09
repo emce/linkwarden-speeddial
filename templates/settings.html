@@ -11,62 +11,55 @@
       <button type="button" class="tab" data-tab="appearance">Appearance</button>
     </div>
 
-    <form method="post" action="{{ url_for('settings_post') }}">
+    <!-- Local-only: no POST -->
+    <form id="settingsForm" onsubmit="return false;">
 
       <!-- GENERAL -->
       <section class="panel active" id="tab-general">
         <label>
           Theme
-          <select name="theme">
-            <option value="auto" {% if theme == 'auto' %}selected{% endif %}>Auto</option>
-            <option value="light" {% if theme == 'light' %}selected{% endif %}>Light</option>
-            <option value="dark" {% if theme == 'dark' %}selected{% endif %}>Dark</option>
+          <select id="theme">
+            <option value="auto">Auto</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
           </select>
         </label>
 
-        <!-- Columns: label + value on one line -->
         <label class="range-field">
           <div class="range-head">
-            <span>Number of columns:</span>
-            <span class="pill" id="colsVal">{{ grid_columns }}</span>
+            <span>Number of columns</span>
+            <span class="pill" id="colsVal"></span>
           </div>
-          <input type="range" name="grid_columns" min="4" max="12" step="1"
-                 value="{{ grid_columns }}"
-                 oninput="colsVal.textContent=this.value">
+          <input type="range" id="grid_columns" min="4" max="12" step="1">
         </label>
 
-        <!-- Spacing: label + value on one line -->
         <label class="range-field">
           <div class="range-head">
-            <span>Spacing:</span>
-            <span class="pill" id="gapVal">{{ grid_spacing }}</span>
+            <span>Spacing</span>
+            <span class="pill" id="gapVal"></span>
           </div>
-          <input type="range" name="grid_spacing" min="0" max="32" step="4"
-                 value="{{ grid_spacing }}"
-                 oninput="gapVal.textContent=this.value">
+          <input type="range" id="grid_spacing" min="0" max="32" step="4">
         </label>
 
         <label class="toggle">
-          <input type="checkbox" name="open_new_tab" value="1"
-                 {% if open_new_tab %}checked{% endif %}>
+          <input type="checkbox" id="open_new_tab">
           <span class="slider"></span>
           <span class="toggle-label">Open links in new tab</span>
         </label>
 
         <label class="toggle">
-          <input type="checkbox" name="show_sidebar" value="1"
-                 {% if show_sidebar %}checked{% endif %}>
+          <input type="checkbox" id="show_sidebar">
           <span class="slider"></span>
-          <span class="toggle-label">Show bookmarks in sidebar (future)</span>
+          <span class="toggle-label">Show bookmarks in sidebar</span>
         </label>
 
         <label>
           Sorting
-          <select name="sort_mode">
-            <option value="date_desc" {% if sort_mode == 'date_desc' %}selected{% endif %}>Date (newest)</option>
-            <option value="date_asc" {% if sort_mode == 'date_asc' %}selected{% endif %}>Date (oldest)</option>
-            <option value="name_asc" {% if sort_mode == 'name_asc' %}selected{% endif %}>Name (A–Z)</option>
-            <option value="name_desc" {% if sort_mode == 'name_desc' %}selected{% endif %}>Name (Z–A)</option>
+          <select id="sort_mode">
+            <option value="date_desc">Date (newest)</option>
+            <option value="date_asc">Date (oldest)</option>
+            <option value="name_asc">Name (A–Z)</option>
+            <option value="name_desc">Name (Z–A)</option>
           </select>
         </label>
       </section>
@@ -75,102 +68,106 @@
       <section class="panel" id="tab-account">
         <label>
           Linkwarden URL
-          <input type="text" value="{{ lw_base_url }}" disabled>
-        </label>
-
-        <label>
-          Token
-          <input type="text" name="lw_token" value="{{ lw_token }}" placeholder="Paste API token">
-          <div class="hint">Recommended authentication method.</div>
+          <input type="text" id="lw_base_url" placeholder="https://linkwarden.example">
+          <div class="hint">Stored locally for session restore.</div>
         </label>
 
         <label>
           Username
-          <input type="text" name="lw_username" value="{{ lw_username }}">
+          <input type="text" id="lw_username" placeholder="Optional (for your reference)">
+          <div class="hint">Stored locally only.</div>
         </label>
 
         <label>
-          Password
-          <input type="password" name="lw_password" placeholder="Used only to create token">
+          Token
+          <input type="text" id="lw_token" placeholder="Paste API token">
         </label>
 
+        <!-- ✅ RESTORED: main grid collection chooser -->
         <label>
-          Collection
-          <select name="collection_id">
-            <option value="">-- choose --</option>
+          Main grid collection
+          <select id="collection_id">
+            <option value="">— Select collection —</option>
             {% for c in collections %}
-              <option value="{{ c.id }}"
-                {% if selected_collection_id|string == c.id|string %}selected{% endif %}>
+              <option value="{{ c.id }}">
                 {{ c.name }}
               </option>
             {% endfor %}
           </select>
         </label>
+
+        <div class="actions" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+          <button type="button" id="restoreSessionBtn">Restore session</button>
+          <button type="button" id="clearLocalAuthBtn">Clear local auth</button>
+        </div>
       </section>
 
       <!-- APPEARANCE -->
       <section class="panel" id="tab-appearance">
-        <div class="row">
-          <label class="radio">
-            <input type="radio" name="bg_mode" value="image"
-                   {% if bg_mode == 'image' %}checked{% endif %}>
-            Background image
-          </label>
+        <label class="radio">
+          <input type="radio" name="bg_mode" id="bg_mode_image" value="image">
+          Background image
+        </label>
 
-          <label class="radio">
-            <input type="radio" name="bg_mode" value="color"
-                   {% if bg_mode == 'color' %}checked{% endif %}>
-            Background color
-          </label>
-        </div>
+        <label class="radio">
+          <input type="radio" name="bg_mode" id="bg_mode_color" value="color">
+          Background color
+        </label>
 
         <div id="bgImageFields">
           <label>
             Background image URL
-            <input type="text" name="bg_url" value="{{ bg_url }}">
+            <input type="text" id="bg_url">
           </label>
         </div>
 
         <div id="bgColorFields">
           <label>
             Background color
-            <input type="color" name="bg_color" value="{{ bg_color }}">
+            <input type="color" id="bg_color">
           </label>
         </div>
 
         <label>
           Text color (optional)
-          <input type="color" name="text_color" value="{{ text_color }}">
+          <input type="color" id="text_color">
         </label>
       </section>
 
-      <div class="actions">
-        <button type="submit">Save</button>
-      </div>
     </form>
   </div>
 </div>
 
 <script>
-  const tabs = document.querySelectorAll(".tab");
-  const panels = document.querySelectorAll(".panel");
-
-  tabs.forEach(btn => {
+  // Tabs
+  document.querySelectorAll(".tab").forEach(btn => {
     btn.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-      panels.forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
       btn.classList.add("active");
       document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
     });
   });
 
+  // Background fields show/hide
   function updateBgMode() {
     const mode = document.querySelector("input[name=bg_mode]:checked")?.value;
     document.getElementById("bgImageFields").style.display = mode === "image" ? "block" : "none";
     document.getElementById("bgColorFields").style.display = mode === "color" ? "block" : "none";
   }
+  window.updateBgMode = updateBgMode;
 
   document.querySelectorAll("input[name=bg_mode]").forEach(r => r.addEventListener("change", updateBgMode));
+
+  // Initialize bg mode UI (ensure a default selection)
+  if (!document.querySelector('input[name=bg_mode]:checked')) {
+    const def = document.getElementById('bg_mode_image');
+    if (def) def.checked = true;
+  }
   updateBgMode();
 </script>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='settings.js') }}"></script>
 {% endblock %}

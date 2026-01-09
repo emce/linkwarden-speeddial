@@ -2,65 +2,38 @@
 
 {% block content %}
 <div class="page">
+  <div class="layout" id="layoutRoot">
 
-  <div class="layout {% if show_sidebar %}has-sidebar{% endif %}">
+    <!-- Sidebar is always present; JS decides if it is shown -->
+    <aside class="sidebar" id="sidebar" aria-label="Bookmarks sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Bookmarks</div>
+        <button
+          type="button"
+          id="sidebarClose"
+          class="sidebar-close"
+          aria-label="Close sidebar">×</button>
+      </div>
 
-    {% if show_sidebar %}
-      <aside class="sidebar" aria-label="Bookmarks sidebar">
-        <div class="sidebar-header">
-          <div class="sidebar-title">Bookmarks</div>
-          <button
-            type="button"
-            id="sidebarClose"
-            class="sidebar-close"
-            aria-label="Close sidebar">×</button>
-        </div>
+      <div class="sidebar-search">
+        <input id="sidebarSearch" type="text" placeholder="Search" autocomplete="off">
+      </div>
 
-        <div class="sidebar-search">
-          <input id="sidebarSearch" type="text" placeholder="Search" autocomplete="off">
-        </div>
-
-        <div id="sidebarList" class="sidebar-list"></div>
-      </aside>
-    {% endif %}
+      <div id="sidebarList" class="sidebar-list"></div>
+    </aside>
 
     <main class="main">
+      <!-- Filled by JS based on localStorage -->
+      <div class="card" id="noCollectionCard" style="display:none;">
+        <h2>No collection selected</h2>
+        <p>
+          Choose a collection in
+          <a href="{{ url_for('settings_get') }}">Settings</a>.
+        </p>
+      </div>
 
-      {% if not collection_id %}
-        <div class="card">
-          <h2>No collection selected</h2>
-          <p>
-            Choose a collection in
-            <a href="{{ url_for('settings_get') }}">Settings</a>.
-          </p>
-        </div>
-      {% else %}
-        <div
-          class="grid"
-          style="
-            grid-template-columns: repeat({{ grid_columns }}, minmax(0, 1fr));
-            gap: {{ grid_spacing }}px;
-          "
-        >
-          {% for t in tiles %}
-            <a
-              class="tile"
-              href="{{ t.url }}"
-              {% if open_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
-              title="{{ t.title }}">
-
-              <div class="tile-icon-wrap">
-                <img
-                  class="tile-icon"
-                  src="{{ t.favicon }}">
-              </div>
-
-              <div class="tile-title">{{ t.title }}</div>
-            </a>
-          {% endfor %}
-        </div>
-      {% endif %}
-
+      <!-- Main grid: JS fills tiles here -->
+      <div class="grid" id="mainGrid" style="display:none;"></div>
     </main>
 
   </div>

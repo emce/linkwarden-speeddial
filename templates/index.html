@@ -1,45 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="page">
-  <div class="layout" id="layoutRoot">
+    <div class="page">
+        <div class="layout" id="layoutRoot">
+            <aside class="sidebar" id="sidebar" aria-label="Bookmarks sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Bookmarks</div>
+                    <button
+                            type="button"
+                            id="sidebarClose"
+                            class="sidebar-close"
+                            aria-label="Close sidebar">×
+                    </button>
+                </div>
 
-    <!-- Sidebar is always present; JS decides if it is shown -->
-    <aside class="sidebar" id="sidebar" aria-label="Bookmarks sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-title">Bookmarks</div>
-        <button
-          type="button"
-          id="sidebarClose"
-          class="sidebar-close"
-          aria-label="Close sidebar">×</button>
-      </div>
+                <div class="sidebar-search">
+                    <input id="sidebarSearch" type="text" placeholder="Search" autocomplete="off">
+                </div>
 
-      <div class="sidebar-search">
-        <input id="sidebarSearch" type="text" placeholder="Search" autocomplete="off">
-      </div>
+                <div id="sidebarList" class="sidebar-list"></div>
+            </aside>
 
-      <div id="sidebarList" class="sidebar-list"></div>
-    </aside>
+            <main class="main">
+                <div class="card" id="noCollectionCard" style="display:none;">
+                    <h2>No collection selected</h2>
+                    <p>
+                        Choose a collection in
+                        <a href="{{ url_for('settings_get') }}">Settings</a>.
+                    </p>
+                </div>
+                <div class="grid" id="mainGrid" style="display:none;"></div>
+            </main>
 
-    <main class="main">
-      <!-- Filled by JS based on localStorage -->
-      <div class="card" id="noCollectionCard" style="display:none;">
-        <h2>No collection selected</h2>
-        <p>
-          Choose a collection in
-          <a href="{{ url_for('settings_get') }}">Settings</a>.
-        </p>
-      </div>
-
-      <!-- Main grid: JS fills tiles here -->
-      <div class="grid" id="mainGrid" style="display:none;"></div>
-    </main>
-
-  </div>
-</div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
 {% endblock %}

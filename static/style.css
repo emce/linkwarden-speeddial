@@ -6,11 +6,6 @@
     --border: rgba(255, 255, 255, 0.12);
 }
 
-/* =========================
-   THEME VARS
-   ========================= */
-
-/* Force Dark */
 body[data-theme="dark"] {
     --bg: rgba(12, 12, 14, 0.72);
     --card: rgba(20, 20, 24, 0.78);
@@ -19,7 +14,6 @@ body[data-theme="dark"] {
     --border: rgba(255, 255, 255, 0.12);
 }
 
-/* Force Light */
 body[data-theme="light"] {
     --bg: rgba(255, 255, 255, 0.85);
     --card: rgba(245, 245, 247, 0.95);
@@ -28,7 +22,6 @@ body[data-theme="light"] {
     --border: rgba(0, 0, 0, 0.12);
 }
 
-/* Auto = follow system */
 @media (prefers-color-scheme: light) {
     body[data-theme="auto"] {
         --bg: rgba(255, 255, 255, 0.85);
@@ -108,7 +101,6 @@ label {
     margin: 10px 0;
 }
 
-/* Text-like controls only (exclude checkbox/radio/range/color) */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
 select {
     width: 100%;
@@ -120,8 +112,7 @@ select {
     color: var(--text);
 }
 
-/* Keep color inputs compact */
-input[type="color"]{
+input[type="color"] {
     width: 56px;
     height: 42px;
     padding: 0;
@@ -145,41 +136,54 @@ button:hover {
     color: var(--muted);
 }
 
-/* =========================
-         SETTINGS
-   ========================= */
+.settings-card .panel {
+    display: none;
+}
 
-.settings-card .panel { display: none; }
-.settings-card .panel.active { display: block; }
+.settings-card .panel.active {
+    display: block;
+}
 
-.settings-card .tabs{
-  display:flex;
-  gap:16px;
-  border-bottom:1px solid var(--border);
-  margin:10px 0 18px;
-  padding:0 2px;
+.settings-card .tabs {
+    display: flex;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+    margin: 10px 0 18px;
+    padding: 0 2px;
 }
-.settings-card .tabs .tab{
-  margin:0;
-  padding:10px 2px;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  cursor:pointer;
-  font-weight:600;
-  position:relative;
+
+.settings-card .tabs .tab {
+    margin: 0;
+    padding: 10px 2px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-weight: 600;
+    position: relative;
 }
-.settings-card .tabs .tab:hover{ color:var(--text); }
-.settings-card .tabs .tab::after{
-  content:"";
-  position:absolute;
-  left:0; right:0;
-  bottom:-1px;
-  height:2px;
-  background:transparent;
+
+.settings-card .tabs .tab:hover {
+    color: var(--text);
 }
-.settings-card .tabs .tab.active{ color:var(--text); }
-.settings-card .tabs .tab.active::after{ background:var(--text); }
+
+.settings-card .tabs .tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: transparent;
+}
+
+.settings-card .tabs .tab.active {
+    color: var(--text);
+}
+
+.settings-card .tabs .tab.active::after {
+    background: var(--text);
+}
 
 .card form {
     display: flex;
@@ -189,15 +193,15 @@ button:hover {
 .card form label {
     display: flex;
     flex-direction: column;
-    gap: 6px;            /* space between label text and input/select */
+    gap: 6px; /* space between label text and input/select */
     margin-bottom: 14px; /* space between fields */
 }
 
 .card form input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
 .card form select {
     box-sizing: border-box;
-    height: 42px;        /* consistent control height */
-    line-height: 1.2;    /* prevents text clipping / overlap */
+    height: 42px; /* consistent control height */
+    line-height: 1.2; /* prevents text clipping / overlap */
 }
 
 .card form button {
@@ -205,23 +209,15 @@ button:hover {
     margin-top: 6px;
 }
 
-/* =========================
-   GRID
-   ========================= */
-
 .grid {
     display: grid;
     gap: 14px;
 }
 
-/* =========================
-   TILE (Speed Dial)
-   ========================= */
-
 .tile {
     display: flex;
     flex-direction: column;
-    align-items: center;        /* centers icon + title horizontally */
+    align-items: center; /* centers icon + title horizontally */
     justify-content: flex-start; /* icon stays at the top */
 
     padding: 8px;
@@ -242,10 +238,6 @@ button:hover {
     background: rgba(24, 24, 28, 0.85);
 }
 
-/* =========================
-   ICON
-   ========================= */
-
 .tile-icon-wrap {
     width: 64px;
     height: 64px;
@@ -253,8 +245,8 @@ button:hover {
     box-sizing: border-box;
 
     display: flex;
-    align-items: center;        /* vertical centering */
-    justify-content: center;    /* horizontal centering */
+    align-items: center;
+    justify-content: center;
 
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.12);
@@ -273,10 +265,6 @@ button:hover {
     object-fit: contain; /* key for screenshots */
 }
 
-/* =========================
-   TITLE
-   ========================= */
-
 .tile-title {
     margin-top: 10px;
     text-align: center;
@@ -291,10 +279,6 @@ button:hover {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
-/* =========================
-   FLASH MESSAGES
-   ========================= */
 
 .flash-wrap {
     margin-bottom: 14px;
@@ -311,10 +295,6 @@ button:hover {
     background: rgba(255, 70, 70, 0.18);
 }
 
-/* =========================
-   HIDE LEGACY ELEMENTS
-   ========================= */
-
 .tile-top,
 .url,
 .favicon,
@@ -322,311 +302,282 @@ button:hover {
     display: none;
 }
 
-/* =========================
-   TOGGLE SWITCH (Checkbox)
-   ========================= */
-
 .toggle {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  cursor: pointer;
-  user-select: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
 }
 
-/* Hide native checkbox */
 .toggle input {
-  display: none;
+    display: none;
 }
 
-/* Slider track */
 .toggle .slider {
-  position: relative;
-  width: 44px;
-  height: 24px;
-  background: rgba(255,255,255,0.25);
-  border-radius: 999px;
-  transition: background 0.2s ease;
-  flex-shrink: 0;
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
 }
 
-/* Knob */
 .toggle .slider::before {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
 }
 
-/* Checked state */
 .toggle input:checked + .slider {
-  background: #3b82f6; /* blue like your screenshot */
+    background: #3b82f6;
 }
 
 .toggle input:checked + .slider::before {
-  transform: translateX(20px);
+    transform: translateX(20px);
 }
 
-/* Text label */
 .toggle-label {
-  font-size: 14px;
-  color: var(--text);
+    font-size: 14px;
+    color: var(--text);
 }
 
-/* Force toggle labels to be horizontal */
 .settings-card label.toggle {
-  display: flex;
-  flex-direction: row;   /* ← THIS fixes it */
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
 }
 
-/* Range label + value on one line */
-.settings-card label.range-field{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.settings-card label.range-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.settings-card .range-head{
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+.settings-card .range-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
 }
 
-/* Prevent extra top-margin if your global range rule adds it */
-.settings-card label.range-field input[type="range"]{
-  margin-top: 0;
+.settings-card label.range-field input[type="range"] {
+    margin-top: 0;
 }
 
-/* Radio controls in Settings (Appearance) */
-.settings-card label.radio{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  margin: 8px 0 14px;
+.settings-card label.radio {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0 14px;
 }
 
-.settings-card label.radio input[type="radio"]{
-  width: 20px;
-  height: 20px;
-  margin: 0;
-  padding: 0;
-  accent-color: #3b82f6;
+.settings-card label.radio input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    accent-color: #3b82f6;
 }
 
-/* =========================
-   SIDEBAR (docked right, fixed)
-   - Hidden by default
-   - Opens by adding `body.sidebar-open`
-   - Occupies full height (top to bottom)
-   - Non-transparent background
-   ========================= */
-
-.layout{
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
+.layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
 }
 
-/* Keep main layout single-column; sidebar is fixed (out of flow) */
 .layout.has-sidebar {
-  grid-template-columns: 1fr;
-  align-items: start;
+    grid-template-columns: 1fr;
+    align-items: start;
 }
 
-/* Reserve space when open so grid doesn't go underneath */
-body.sidebar-open .main{
-  margin-right: 360px; /* must match .sidebar width */
+body.sidebar-open .main {
+    margin-right: 360px;
 }
 
-/* Fixed right dock */
-.sidebar{
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 360px;
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 360px;
 
-  /* solid (no transparency) */
-  background: #121216;
+    background: #121216;
 
-  border-left: 1px solid var(--border);
-  border-top: 0;
-  border-right: 0;
-  border-bottom: 0;
-  border-radius: 0;
+    border-left: 1px solid var(--border);
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 0;
 
-  padding: 16px;
-  overflow: auto;
-  z-index: 9999;
+    padding: 16px;
+    overflow: auto;
+    z-index: 9999;
 
-  /* hidden state */
-  transform: translateX(100%);
-  transition: transform 180ms ease;
+    transform: translateX(100%);
+    transition: transform 180ms ease;
 }
 
-/* Slide-in */
-body.sidebar-open .sidebar{
-  transform: translateX(0);
+body.sidebar-open .sidebar {
+    transform: translateX(0);
 }
 
-/* Toggle button in topbar */
-.sidebar-toggle{
-  margin-left: 12px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.12);
-  color: var(--text);
-  cursor: pointer;
+.sidebar-toggle {
+    margin-left: 12px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text);
+    cursor: pointer;
 
-  line-height: 1;
-  font-size: 20px;
+    line-height: 1;
+    font-size: 20px;
 }
 
-body.sidebar-open .sidebar-toggle{
-  background: rgba(255,255,255,0.18);
+body.sidebar-open .sidebar-toggle {
+    background: rgba(255, 255, 255, 0.18);
 }
 
-/* Header pinned */
-.sidebar-header{
-  position: sticky;
-  top: 0;
+.sidebar-header {
+    position: sticky;
+    top: 0;
 
-  margin: -16px -16px 12px;
-  padding: 16px;
+    margin: -16px -16px 12px;
+    padding: 16px;
 
-  background: #121216;
-  border-bottom: 1px solid var(--border);
+    background: #121216;
+    border-bottom: 1px solid var(--border);
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1;
 }
 
-.sidebar-title{
-  font-weight: 800;
-  font-size: 20px;
+.sidebar-title {
+    font-weight: 800;
+    font-size: 20px;
 }
 
-.sidebar-close{
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.sidebar-close {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-  padding: 0;
-  margin: 0;
+    padding: 0;
+    margin: 0;
 
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: #1a1a20;
-  color: var(--text);
-  cursor: pointer;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #1a1a20;
+    color: var(--text);
+    cursor: pointer;
 
-  line-height: 1;
-  font-size: 20px;
+    line-height: 1;
+    font-size: 20px;
 }
 
-.sidebar-close:hover{
-  background: #22222a;
+.sidebar-close:hover {
+    background: #22222a;
 }
 
-.sidebar-search{
-  margin: 12px 0 14px;
+.sidebar-search {
+    margin: 12px 0 14px;
 }
 
-.sidebar-search input{
-  width: 100%;
-  box-sizing: border-box;
-  height: 42px;
-  padding: 10px 12px;
-  border-radius: 12px;
+.sidebar-search input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 42px;
+    padding: 10px 12px;
+    border-radius: 12px;
 
-  border: 1px solid rgba(255,255,255,0.12);
-  background: #0e0e12;
-  color: var(--text);
-  outline: none;
-  margin-top: 0; /* keep compact inside sidebar */
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #0e0e12;
+    color: var(--text);
+    outline: none;
+    margin-top: 0;
 }
 
-.sidebar-search input:focus{
-  border-color: rgba(59,130,246,0.6);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
+.sidebar-search input:focus {
+    border-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
-.sidebar-search input::placeholder{
-  color: rgba(255,255,255,0.45);
+.sidebar-search input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
 }
 
-.sidebar-list{
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.sidebar-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.sb-item{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--text);
+.sb-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
 }
 
-.sb-item:hover{
-  background: rgba(255,255,255,0.08);
+.sb-item:hover {
+    background: rgba(255, 255, 255, 0.08);
 }
 
-.sb-left{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
+.sb-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
-.sb-icon{
-  width: 22px;
-  height: 18px;
-  border-radius: 3px;
-  background: #f4c430; /* folder-like */
-  flex-shrink: 0;
+.sb-icon {
+    width: 22px;
+    height: 18px;
+    border-radius: 3px;
+    background: #f4c430; /* folder-like */
+    flex-shrink: 0;
 }
 
-.sb-name{
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 700;
+.sb-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 700;
 }
 
-.sb-count{
-  color: var(--muted);
-  font-weight: 700;
+.sb-count {
+    color: var(--muted);
+    font-weight: 700;
 }
 
-.sb-sep{
-  margin: 14px 0 8px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,0.10);
-  color: rgba(255,255,255,0.55);
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  text-transform: uppercase;
-  font-size: 12px;
+.sb-sep {
+    margin: 14px 0 8px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    font-size: 12px;
 }

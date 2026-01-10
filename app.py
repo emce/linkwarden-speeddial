@@ -33,10 +33,6 @@ ALLOWED_SORT_MODES = {
     "name_desc",
 }
 
-# -----------------------
-# Helpers
-# -----------------------
-
 def normalized_base_url(u: str) -> str:
     u = (u or "").strip()
     if not u:
@@ -84,11 +80,6 @@ def favicon_for(url: str) -> str:
     base = session.get("lw_base_url")
     return f"{base}/api/v1/getFavicon?url=https://{host}"
 
-
-# -----------------------
-# Login / Logout
-# -----------------------
-
 @app.get("/login")
 def login_get():
     return render_template("login.html")
@@ -130,9 +121,6 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# -----------------------
-# Settings
-# -----------------------
 
 @app.get("/settings")
 def settings_get():
@@ -169,9 +157,6 @@ def settings_post():
 
     return redirect(url_for("settings_get"))
 
-# -----------------------
-# Sidebar API
-# -----------------------
 
 @app.get("/api/collections")
 def api_collections():
@@ -209,16 +194,11 @@ def api_links():
     _links_cache[cache_key] = (now, links)
     return jsonify({"response": links})
 
-# -----------------------
-# Main view
-# -----------------------
 
 @app.get("/")
 def index():
     if not require_login():
         return redirect(url_for("login_get"))
-
-    # MAIN GRID — ONLY from settings collection
     collection_id = session.get("collection_id", "")
     links = []
 
@@ -250,6 +230,7 @@ def index():
         show_sidebar=session.get("show_sidebar", False),
     )
 
+
 @app.post("/auth/restore")
 def auth_restore():
     data = request.get_json(silent=True) or {}
@@ -259,7 +240,6 @@ def auth_restore():
     if not base_url or not token:
         return jsonify({"ok": False, "error": "Missing base_url or token"}), 400
 
-    # Validate token by calling Linkwarden
     try:
         r = requests.get(
             f"{base_url}/api/v1/collections",
@@ -271,7 +251,6 @@ def auth_restore():
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 502
 
-    # Rehydrate session
     session["lw_base_url"] = base_url
     session["lw_token"] = token
     session.modified = True

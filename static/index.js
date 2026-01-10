@@ -1,10 +1,3 @@
-// =========================
-// Index page
-// - Main grid uses collection_id from localStorage (settings)
-// - Sidebar is independent: browse collections/links
-// - Sidebar toggle button is provided by base.html
-// =========================
-
 (function () {
   // ---------- Helpers ----------
   function lsGet(key, fallback) {

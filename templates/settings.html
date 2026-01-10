@@ -1,173 +1,164 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container narrow">
-  <div class="card settings-card">
-    <h2>Settings</h2>
+    <div class="container narrow">
+        <div class="card settings-card">
+            <h2>Settings</h2>
+            <div class="tabs">
+                <button type="button" class="tab active" data-tab="general">General</button>
+                <button type="button" class="tab" data-tab="account">Account</button>
+                <button type="button" class="tab" data-tab="appearance">Appearance</button>
+            </div>
+            <form id="settingsForm" onsubmit="return false;">
+                <section class="panel active" id="tab-general">
+                    <label>
+                        Theme
+                        <select id="theme">
+                            <option value="auto">Auto</option>
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </label>
 
-    <div class="tabs">
-      <button type="button" class="tab active" data-tab="general">General</button>
-      <button type="button" class="tab" data-tab="account">Account</button>
-      <button type="button" class="tab" data-tab="appearance">Appearance</button>
+                    <label class="range-field">
+                        <div class="range-head">
+                            <span>Number of columns</span>
+                            <span class="pill" id="colsVal"></span>
+                        </div>
+                        <input type="range" id="grid_columns" min="4" max="12" step="1">
+                    </label>
+
+                    <label class="range-field">
+                        <div class="range-head">
+                            <span>Spacing</span>
+                            <span class="pill" id="gapVal"></span>
+                        </div>
+                        <input type="range" id="grid_spacing" min="0" max="32" step="4">
+                    </label>
+
+                    <label class="toggle">
+                        <input type="checkbox" id="open_new_tab">
+                        <span class="slider"></span>
+                        <span class="toggle-label">Open links in new tab</span>
+                    </label>
+
+                    <label class="toggle">
+                        <input type="checkbox" id="show_sidebar">
+                        <span class="slider"></span>
+                        <span class="toggle-label">Show bookmarks in sidebar</span>
+                    </label>
+
+                    <label>
+                        Sorting
+                        <select id="sort_mode">
+                            <option value="date_desc">Date (newest)</option>
+                            <option value="date_asc">Date (oldest)</option>
+                            <option value="name_asc">Name (A–Z)</option>
+                            <option value="name_desc">Name (Z–A)</option>
+                        </select>
+                    </label>
+                </section>
+
+                <section class="panel" id="tab-account">
+                    <label>
+                        Linkwarden URL
+                        <input type="text" id="lw_base_url" placeholder="https://linkwarden.example">
+                        <div class="hint">Stored locally for session restore.</div>
+                    </label>
+
+                    <label>
+                        Username
+                        <input type="text" id="lw_username" placeholder="Optional (for your reference)">
+                        <div class="hint">Stored locally only.</div>
+                    </label>
+
+                    <label>
+                        Token
+                        <input type="text" id="lw_token" placeholder="Paste API token">
+                    </label>
+
+                    <label>
+                        Main grid collection
+                        <select id="collection_id">
+                            <option value="">— Select collection —</option>
+                            {% for c in collections %}
+                                <option value="{{ c.id }}">
+                                    {{ c.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </label>
+
+                    <div class="actions" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                        <button type="button" id="restoreSessionBtn">Restore session</button>
+                        <button type="button" id="clearLocalAuthBtn">Clear local auth</button>
+                    </div>
+                </section>
+
+                <section class="panel" id="tab-appearance">
+                    <label class="radio">
+                        <input type="radio" name="bg_mode" id="bg_mode_image" value="image">
+                        Background image
+                    </label>
+
+                    <label class="radio">
+                        <input type="radio" name="bg_mode" id="bg_mode_color" value="color">
+                        Background color
+                    </label>
+
+                    <div id="bgImageFields">
+                        <label>
+                            Background image URL
+                            <input type="text" id="bg_url">
+                        </label>
+                    </div>
+
+                    <div id="bgColorFields">
+                        <label>
+                            Background color
+                            <input type="color" id="bg_color">
+                        </label>
+                    </div>
+
+                    <label>
+                        Text color (optional)
+                        <input type="color" id="text_color">
+                    </label>
+                </section>
+
+            </form>
+        </div>
     </div>
 
-    <!-- Local-only: no POST -->
-    <form id="settingsForm" onsubmit="return false;">
+    <script>
+        // Tabs
+        document.querySelectorAll(".tab").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+                document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+                btn.classList.add("active");
+                document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+            });
+        });
 
-      <!-- GENERAL -->
-      <section class="panel active" id="tab-general">
-        <label>
-          Theme
-          <select id="theme">
-            <option value="auto">Auto</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
+        function updateBgMode() {
+            const mode = document.querySelector("input[name=bg_mode]:checked")?.value;
+            document.getElementById("bgImageFields").style.display = mode === "image" ? "block" : "none";
+            document.getElementById("bgColorFields").style.display = mode === "color" ? "block" : "none";
+        }
 
-        <label class="range-field">
-          <div class="range-head">
-            <span>Number of columns</span>
-            <span class="pill" id="colsVal"></span>
-          </div>
-          <input type="range" id="grid_columns" min="4" max="12" step="1">
-        </label>
+        window.updateBgMode = updateBgMode;
 
-        <label class="range-field">
-          <div class="range-head">
-            <span>Spacing</span>
-            <span class="pill" id="gapVal"></span>
-          </div>
-          <input type="range" id="grid_spacing" min="0" max="32" step="4">
-        </label>
+        document.querySelectorAll("input[name=bg_mode]").forEach(r => r.addEventListener("change", updateBgMode));
 
-        <label class="toggle">
-          <input type="checkbox" id="open_new_tab">
-          <span class="slider"></span>
-          <span class="toggle-label">Open links in new tab</span>
-        </label>
-
-        <label class="toggle">
-          <input type="checkbox" id="show_sidebar">
-          <span class="slider"></span>
-          <span class="toggle-label">Show bookmarks in sidebar</span>
-        </label>
-
-        <label>
-          Sorting
-          <select id="sort_mode">
-            <option value="date_desc">Date (newest)</option>
-            <option value="date_asc">Date (oldest)</option>
-            <option value="name_asc">Name (A–Z)</option>
-            <option value="name_desc">Name (Z–A)</option>
-          </select>
-        </label>
-      </section>
-
-      <!-- ACCOUNT -->
-      <section class="panel" id="tab-account">
-        <label>
-          Linkwarden URL
-          <input type="text" id="lw_base_url" placeholder="https://linkwarden.example">
-          <div class="hint">Stored locally for session restore.</div>
-        </label>
-
-        <label>
-          Username
-          <input type="text" id="lw_username" placeholder="Optional (for your reference)">
-          <div class="hint">Stored locally only.</div>
-        </label>
-
-        <label>
-          Token
-          <input type="text" id="lw_token" placeholder="Paste API token">
-        </label>
-
-        <!-- ✅ RESTORED: main grid collection chooser -->
-        <label>
-          Main grid collection
-          <select id="collection_id">
-            <option value="">— Select collection —</option>
-            {% for c in collections %}
-              <option value="{{ c.id }}">
-                {{ c.name }}
-              </option>
-            {% endfor %}
-          </select>
-        </label>
-
-        <div class="actions" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-          <button type="button" id="restoreSessionBtn">Restore session</button>
-          <button type="button" id="clearLocalAuthBtn">Clear local auth</button>
-        </div>
-      </section>
-
-      <!-- APPEARANCE -->
-      <section class="panel" id="tab-appearance">
-        <label class="radio">
-          <input type="radio" name="bg_mode" id="bg_mode_image" value="image">
-          Background image
-        </label>
-
-        <label class="radio">
-          <input type="radio" name="bg_mode" id="bg_mode_color" value="color">
-          Background color
-        </label>
-
-        <div id="bgImageFields">
-          <label>
-            Background image URL
-            <input type="text" id="bg_url">
-          </label>
-        </div>
-
-        <div id="bgColorFields">
-          <label>
-            Background color
-            <input type="color" id="bg_color">
-          </label>
-        </div>
-
-        <label>
-          Text color (optional)
-          <input type="color" id="text_color">
-        </label>
-      </section>
-
-    </form>
-  </div>
-</div>
-
-<script>
-  // Tabs
-  document.querySelectorAll(".tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
-    });
-  });
-
-  // Background fields show/hide
-  function updateBgMode() {
-    const mode = document.querySelector("input[name=bg_mode]:checked")?.value;
-    document.getElementById("bgImageFields").style.display = mode === "image" ? "block" : "none";
-    document.getElementById("bgColorFields").style.display = mode === "color" ? "block" : "none";
-  }
-  window.updateBgMode = updateBgMode;
-
-  document.querySelectorAll("input[name=bg_mode]").forEach(r => r.addEventListener("change", updateBgMode));
-
-  // Initialize bg mode UI (ensure a default selection)
-  if (!document.querySelector('input[name=bg_mode]:checked')) {
-    const def = document.getElementById('bg_mode_image');
-    if (def) def.checked = true;
-  }
-  updateBgMode();
-</script>
+        if (!document.querySelector('input[name=bg_mode]:checked')) {
+            const def = document.getElementById('bg_mode_image');
+            if (def) def.checked = true;
+        }
+        updateBgMode();
+    </script>
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ url_for('static', filename='settings.js') }}"></script>
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
 {% endblock %}

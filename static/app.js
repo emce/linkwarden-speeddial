@@ -1,126 +1,96 @@
-// =========================
-// Global app helpers
-// Loaded on ALL pages
-// =========================
-
 function lsGet(key, fallback = "") {
-  try {
-    return localStorage.getItem(key) ?? fallback;
-  } catch (_) {
-    return fallback;
-  }
+    try {
+        return localStorage.getItem(key) ?? fallback;
+    } catch (_) {
+        return fallback;
+    }
 }
-
-// -------------------------
-// Session restore helpers
-// -------------------------
 
 async function restoreSessionFromLocalStorage() {
-  const base_url = lsGet("lw_base_url", "").trim();
-  const token = lsGet("lw_token", "").trim();
+    const base_url = lsGet("lw_base_url", "").trim();
+    const token = lsGet("lw_token", "").trim();
 
-  if (!base_url || !token) return false;
+    if (!base_url || !token) return false;
 
-  try {
-    const r = await fetch("/auth/restore", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({ base_url, token }),
-    });
-    return r.ok;
-  } catch (_) {
-    return false;
-  }
+    try {
+        const r = await fetch("/auth/restore", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            credentials: "same-origin",
+            body: JSON.stringify({base_url, token}),
+        });
+        return r.ok;
+    } catch (_) {
+        return false;
+    }
 }
-
-// -------------------------
-// Fetch wrapper (auto restore)
-// -------------------------
 
 async function fetchJson(url, options = {}) {
-  const opts = { credentials: "same-origin", ...options };
+    const opts = {credentials: "same-origin", ...options};
 
-  let r = await fetch(url, opts);
+    let r = await fetch(url, opts);
 
-  if (r.status === 401) {
-    const ok = await restoreSessionFromLocalStorage();
-    if (!ok) return { status: 401, data: null };
-    r = await fetch(url, opts);
-  }
+    if (r.status === 401) {
+        const ok = await restoreSessionFromLocalStorage();
+        if (!ok) return {status: 401, data: null};
+        r = await fetch(url, opts);
+    }
 
-  let data = null;
-  try {
-    data = await r.json();
-  } catch (_) {}
+    let data = null;
+    try {
+        data = await r.json();
+    } catch (_) {
+    }
 
-  return { status: r.status, data };
+    return {status: r.status, data};
 }
 
-// Expose for non-module scripts
 window.fetchJson = fetchJson;
 window.restoreSessionFromLocalStorage = restoreSessionFromLocalStorage;
 
-// -------------------------
-// Global sidebar toggle visibility
-// -------------------------
-// - Runs on ALL pages
-// - Keeps space reserved (visibility:hidden)
-// - Hides toggle on pages without sidebar (e.g. Settings)
-// -------------------------
-
 (function () {
-  function updateSidebarToggleVisibility() {
-    const btn = document.getElementById("sidebarToggle");
-    if (!btn) return;
+    function updateSidebarToggleVisibility() {
+        const btn = document.getElementById("sidebarToggle");
+        if (!btn) return;
 
-    const sidebarEl = document.getElementById("sidebar");
+        const sidebarEl = document.getElementById("sidebar");
 
-    // Read setting
-    let showSidebar = false;
-    try {
-      showSidebar = (localStorage.getItem("lw_show_sidebar") || "0") === "1";
-    } catch (_) {
-      showSidebar = false;
+        let showSidebar = false;
+        try {
+            showSidebar = (localStorage.getItem("lw_show_sidebar") || "0") === "1";
+        } catch (_) {
+            showSidebar = false;
+        }
+        if (!sidebarEl) {
+            btn.style.visibility = "hidden";
+            btn.style.pointerEvents = "none";
+            btn.setAttribute("aria-expanded", "false");
+            return;
+        }
+        if (!showSidebar) {
+            btn.style.visibility = "hidden";
+            btn.style.pointerEvents = "none";
+            btn.setAttribute("aria-expanded", "false");
+            return;
+        }
+        btn.style.visibility = "visible";
+        btn.style.pointerEvents = "auto";
+
+        const isOpen = document.body.classList.contains("sidebar-open");
+        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
     }
 
-    // Sidebar not present (Settings page)
-    if (!sidebarEl) {
-      btn.style.visibility = "hidden";
-      btn.style.pointerEvents = "none";
-      btn.setAttribute("aria-expanded", "false");
-      return;
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", updateSidebarToggleVisibility);
+    } else {
+        updateSidebarToggleVisibility();
     }
 
-    // Sidebar feature disabled
-    if (!showSidebar) {
-      btn.style.visibility = "hidden";
-      btn.style.pointerEvents = "none";
-      btn.setAttribute("aria-expanded", "false");
-      return;
-    }
+    window.addEventListener("storage", (e) => {
+        if (e.key === "lw_show_sidebar" || e.key === "lw_sidebar_open") {
+            updateSidebarToggleVisibility();
+        }
+    });
 
-    // Sidebar enabled
-    btn.style.visibility = "visible";
-    btn.style.pointerEvents = "auto";
-
-    const isOpen = document.body.classList.contains("sidebar-open");
-    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", updateSidebarToggleVisibility);
-  } else {
-    updateSidebarToggleVisibility();
-  }
-
-  // React to Settings changes across tabs
-  window.addEventListener("storage", (e) => {
-    if (e.key === "lw_show_sidebar" || e.key === "lw_sidebar_open") {
-      updateSidebarToggleVisibility();
-    }
-  });
-
-  // Optional same-tab update hook
-  window.addEventListener("lw:settings-changed", updateSidebarToggleVisibility);
+    window.addEventListener("lw:settings-changed", updateSidebarToggleVisibility);
 })();

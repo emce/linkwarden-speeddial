@@ -1,0 +1,22 @@
+services:
+    tools:
+        container_name: linkwarden-speeddial
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            - HOSTNAME=speeddial
+            - TZ=Europe/Warsaw
+            - LANG=pl_PL.UTF-8
+            - LANGUAGE=pl_PL:pl
+            - LC_ALL=pl_PL.UTF-8
+        ports:
+            - "9018:9018"
+        volumes:
+            - ./:/code
+        networks:
+            - bridged
+
+networks:
+    bridged:
+        external: true

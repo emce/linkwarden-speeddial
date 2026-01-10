@@ -4,12 +4,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        environment:
-            - HOSTNAME=speeddial
-            - TZ=Europe/Warsaw
-            - LANG=pl_PL.UTF-8
-            - LANGUAGE=pl_PL:pl
-            - LC_ALL=pl_PL.UTF-8
+        env_file:
+            - .env
         ports:
             - "9018:9018"
         volumes:

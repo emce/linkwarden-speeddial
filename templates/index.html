@@ -1,41 +1,105 @@
-{% extends "base.html" %}
+{# templates/index.html — single-file template (embedded CSS + JS), env-driven, no localStorage #}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ title or hostname or "Speed Dial" }}</title>
 
-{% block content %}
-    <div class="page">
-        <div class="layout" id="layoutRoot">
-            <aside class="sidebar" id="sidebar" aria-label="Bookmarks sidebar">
-                <div class="sidebar-header">
-                    <div class="sidebar-title">Bookmarks</div>
-                    <button
-                            type="button"
-                            id="sidebarClose"
-                            class="sidebar-close"
-                            aria-label="Close sidebar">×
-                    </button>
-                </div>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300..700&display=swap" rel="stylesheet">
 
-                <div class="sidebar-search">
-                    <input id="sidebarSearch" type="text" placeholder="Search" autocomplete="off">
-                </div>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 
-                <div id="sidebarList" class="sidebar-list"></div>
-            </aside>
-
-            <main class="main">
-                <div class="card" id="noCollectionCard" style="display:none;">
-                    <h2>No collection selected</h2>
-                    <p>
-                        Choose a collection in
-                        <a href="{{ url_for('settings_get') }}">Settings</a>.
-                    </p>
-                </div>
-                <div class="grid" id="mainGrid" style="display:none;"></div>
-            </main>
-
-        </div>
+<body
+  data-theme="{{ theme }}"
+  style="
+    {% if background_mode == 'wallpaper' and wallpaper_url %}background-image:url('{{ wallpaper_url }}');{% endif %}
+    {% if background_mode == 'color' and background_color %}background-color:{{ background_color }};{% endif %}
+    {% if text_color %}color:{{ text_color }};{% endif %}
+  "
+>
+  <header class="topbar">
+    <div class="brand">
+      <span>{{ collection_name }}</span>
     </div>
-{% endblock %}
 
-{% block scripts %}
-    <script src="{{ url_for('static', filename='index.js') }}"></script>
-{% endblock %}
+    <nav class="nav">
+      {% if show_sidebar %}
+      <span class="sidebar-toggle-slot">
+        <button
+          type="button"
+          id="sidebarToggle"
+          class="sidebar-toggle"
+          aria-label="Toggle bookmarks sidebar"
+          aria-expanded="false">
+          ☰
+        </button>
+      </span>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="container">
+    <div id="noCollectionCard" class="card" style="display:none;">
+      <h2 style="margin:0 0 8px;">No collection selected</h2>
+      <div class="muted">Configure LINKWARDEN_COLLECTION in your environment variables.</div>
+    </div>
+
+    <div
+      id="mainGrid"
+      class="grid"
+      style="
+        grid-template-columns: repeat({{ grid_columns }}, minmax(0, 1fr));
+        gap: {{ grid_spacing }}px;
+        display: none;
+      "
+    ></div>
+
+    <div id="errorCard" class="card" style="display:none; margin-top: 14px;">
+      <div style="font-weight:800; margin-bottom:6px;">Error</div>
+      <div id="errorText" class="muted"></div>
+    </div>
+  </main>
+
+  {% if show_sidebar %}
+  <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+  <aside id="sidebar" class="sidebar" aria-label="Bookmarks sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Bookmarks</div>
+      <button type="button" id="sidebarClose" class="sidebar-close" aria-label="Close sidebar">×</button>
+    </div>
+
+    <div class="sidebar-search">
+      <input id="sidebarSearch" type="text" placeholder="Search" autocomplete="off">
+    </div>
+
+    <div id="sidebarList" class="sidebar-list"></div>
+  </aside>
+  {% endif %}
+
+  <script>
+    // Server-provided config (env-driven; no Settings UI; no localStorage)
+    window.APP_CONFIG = {
+      linkwarden_url: "{{ linkwarden_url }}",
+      collection_id: "{{ collection_id }}",
+      sort_mode: "{{ sort_mode }}",
+      open_new_tab: {{ 'true' if open_new_tab else 'false' }},
+      show_sidebar: {{ 'true' if show_sidebar else 'false' }},
+      grid_columns: {{ grid_columns|int }},
+      grid_spacing: {{ grid_spacing|int }},
+      theme: "{{ theme }}",
+      background_mode: "{{ background_mode }}",
+      wallpaper_url: "{{ wallpaper_url }}",
+      background_color: "{{ background_color }}",
+      text_color: "{{ text_color }}",
+      hostname: "{{ hostname }}",
+    };
+  </script>
+
+  <script src="{{ url_for('static', filename='app.js') }}" type="module"></script>
+</body>
+</html>

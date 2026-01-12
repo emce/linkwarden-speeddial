@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unlock</title>
+
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .unlock-page{
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .unlock-card{
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .unlock-card h2{
+      margin: 0 0 14px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .unlock-card form{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .unlock-card input[type="password"]{
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .unlock-card button{
+      width: 100%;
+    }
+
+    .unlock-error{
+      color: #ff6b6b;
+      text-align: center;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    .unlock-hint{
+      text-align: center;
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body
+  data-theme="{{ theme|default('auto') }}"
+  style="
+    {% if background_mode|default('wallpaper') == 'wallpaper' and wallpaper_url|default('') %}background-image:url('{{ wallpaper_url }}');{% endif %}
+    {% if background_mode|default('wallpaper') == 'color' and background_color|default('') %}background-color:{{ background_color }};{% endif %}
+    {% if text_color|default('') %}color:{{ text_color }};{% endif %}
+  "
+>
+
+  <div class="unlock-page">
+    <div class="card unlock-card">
+      <h2>Enter password</h2>
+
+      {% if error %}
+        <div class="unlock-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('unlock_post') }}">
+        <input type="password" name="password" autofocus placeholder="Password" autocomplete="current-password">
+        <button type="submit">Unlock</button>
+      </form>
+
+      <div class="unlock-hint">This page is protected.</div>
+    </div>
+  </div>
+
+</body>
+</html>

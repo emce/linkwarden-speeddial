@@ -9,13 +9,45 @@ Links are created based on selected collection.
 - Bookmarks sidebar (based on data from Linkwarden)
 - Data is stored locally (local storage)
 
+## Configuration
+
+Create `.env` based on `.env.template` to apply your configuration:
+```dotenv
+FLASK_SECRET_KEY=dev-change-me
+FLASK_PORT=9018
+FLASK_HOST=127.0.0.1
+FLASK_DEBUG=true
+LINKWARDEN_URL=https://linkwarden.example
+LINKWARDEN_USERNAME=username
+LINKWARDEN_TOKEN=
+LINKWARDEN_PASSWORD=
+### number from link, like https://linkwarden.example/collections/50
+LINKWARDEN_COLLECTION=50
+LINKWARDEN_COLLECTION_NAME="Linkwarden SpeedDial"
+LINKWARDEN_COLLECTION_COLUMNS=(4-12)
+LINKWARDEN_COLLECTION_SPACING=(4-36)
+LINKWARDEN_COLLECTION_SORT=(date_desc|date_asc|name_asc|name_desc)
+SPEEDDIAL_THEME=(auto|dark|light)
+SPEEDDIAL_BACKGROUND=(wallpaper|color)
+SPEEDDIAL_WALLPAPER_URL=
+SPEEDDIAL_BACKGROUND_COLOR=(black|#FFFFFF)
+SPEEDDIAL_TEXT_COLOR=(black|#FFFFFF)
+SPEEDDIAL_OPEN_IN_NEW_TAB=(true|false)
+SPEEDDIAL_BOOKMARKS=false
+SPEEDDIAL_PASSWORD=
+SPEEDDIAL_UNLOCK_TTL_MINUTES=(0-525600)
+HOSTNAME=speeddial
+TZ=Europe/Warsaw
+LANG=pl_PL.UTF-8
+LANGUAGE=pl_PL:pl
+LC_ALL=pl_PL.UTF-8
+```
+
 ## Screenshots
 
 ![Main grid](images/screen_1.png)
 
 ![Sidebar](images/screen_2.png)
-
-![Settings](images/screen_3.png)
 
 ## Development
 

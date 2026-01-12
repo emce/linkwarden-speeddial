@@ -1,5 +1,5 @@
 # Linkwarden Speed Dial
-A Speed Dial page for browser based on data from Linkwarden.
+A Speed Dial page for browser based on data from Linkwarden (a bit familiar to speeddial2.com).
 Links are created based on selected collection.
 
 ## Features
@@ -43,11 +43,18 @@ LANGUAGE=pl_PL:pl
 LC_ALL=pl_PL.UTF-8
 ```
 
+
+## Security
+
+This is single user application, to make your data secure, use `SPEEDDIAL_PASSWORD` to set password to be checked and `SPEEDDIAL_UNLOCK_TTL_MINUTES` to set lifetime of cookie for this session.
+
 ## Screenshots
 
 ![Main grid](images/screen_1.png)
 
 ![Sidebar](images/screen_2.png)
+
+![Password](images/screen_3.png)
 
 ## Development
 

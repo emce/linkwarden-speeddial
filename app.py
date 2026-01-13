@@ -87,13 +87,50 @@ def env_int_range(
         return max_value
     return value
 
+def parse_int_list(raw: str) -> list[int]:
+    """Accepts: '50', '50,51', '[50, 51]' -> [50, 51]."""
+    s = (raw or "").strip()
+    if not s:
+        return []
+    if s.startswith("[") and s.endswith("]"):
+        s = s[1:-1]
+    parts = [p.strip() for p in s.split(",") if p.strip()]
+    out: list[int] = []
+    for p in parts:
+        try:
+            out.append(int(p))
+        except Exception:
+            continue
+    # de-duplicate (keep order)
+    seen = set()
+    dedup: list[int] = []
+    for x in out:
+        if x in seen:
+            continue
+        seen.add(x)
+        dedup.append(x)
+    return dedup
+
+
+def pick_active_collection(allowed: list[int], requested: str | None) -> int | None:
+    if not allowed:
+        return None
+    if requested:
+        try:
+            rid = int(requested)
+            if rid in allowed:
+                return rid
+        except Exception:
+            pass
+    return allowed[0]
+
 
 LINKWARDEN_URL = env_str("LINKWARDEN_URL")
 LINKWARDEN_USERNAME = env_str("LINKWARDEN_USERNAME")
 LINKWARDEN_PASSWORD = env_str("LINKWARDEN_PASSWORD")
 LINKWARDEN_TOKEN = env_str("LINKWARDEN_TOKEN")
 
-LINKWARDEN_COLLECTION = env_str("LINKWARDEN_COLLECTION")
+LINKWARDEN_COLLECTIONS = parse_int_list(env_str("LINKWARDEN_COLLECTION"))
 LINKWARDEN_COLLECTION_NAME = env_str("LINKWARDEN_COLLECTION_NAME", "Linkwarden SpeedDial")
 
 LINKWARDEN_COLLECTION_COLUMNS = env_int_range(
@@ -439,6 +476,36 @@ def api_tree():
 
 @app.get("/")
 def index():
+    active_collection = pick_active_collection(LINKWARDEN_COLLECTIONS, request.args.get("c"))
+
+    # Map id -> Linkwarden name (optional, uses your existing /api/collections logic)
+    id_to_name: dict[int, str] = {}
+    try:
+        cols = api_collections().get_json().get("response", [])
+        for c in cols:
+            try:
+                cid = int(c.get("id"))
+                nm = c.get("name")
+                if isinstance(nm, str) and nm.strip():
+                    id_to_name[cid] = nm.strip()
+            except Exception:
+                continue
+    except Exception:
+        pass
+
+    collection_tabs = []
+    if len(LINKWARDEN_COLLECTIONS) > 1:
+        for cid in LINKWARDEN_COLLECTIONS:
+            collection_tabs.append({
+                "id": cid,
+                "name": id_to_name.get(cid) or f"Collection {cid}",
+                "active": (active_collection == cid),
+                "href": url_for("index", c=cid),
+            })
+
+    active_collection_name = id_to_name.get(active_collection) if active_collection is not None else None
+    if not active_collection_name:
+        active_collection_name = LINKWARDEN_COLLECTION_NAME
     show_sidebar = bool(SPEEDDIAL_BOOKMARKS)
 
     return render_template(
@@ -451,13 +518,14 @@ def index():
         background_color=SPEEDDIAL_BACKGROUND_COLOR,
         text_color=SPEEDDIAL_TEXT_COLOR,
         linkwarden_url=lw_base_url(),
-        collection_id=LINKWARDEN_COLLECTION,
+        collection_id=str(active_collection) if active_collection is not None else "",
+        collection_name=active_collection_name,
+        collection_tabs=collection_tabs,
         sort_mode=LINKWARDEN_COLLECTION_SORT,
         open_new_tab=SPEEDDIAL_OPEN_IN_NEW_TAB,
         show_sidebar=show_sidebar,
         grid_columns=LINKWARDEN_COLLECTION_COLUMNS,
         grid_spacing=LINKWARDEN_COLLECTION_SPACING,
-        collection_name=LINKWARDEN_COLLECTION_NAME,
     )
 
 

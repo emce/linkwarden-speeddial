@@ -72,17 +72,164 @@ body {
 }
 
 .brand {
-    font-weight: 800;
-    letter-spacing: 0.2px;
     display: flex;
-    gap: 10px;
     align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-.brand small {
-    font-weight: 600;
+.tabs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.tab {
+    text-decoration: none;
     color: var(--muted);
-    letter-spacing: 0.1px;
+    font-weight: 700;
+    padding: 6px 2px;
+    border-bottom: 2px solid transparent;
+}
+
+.tab:hover {
+    color: var(--text);
+}
+
+.tab.active {
+    color: var(--text);
+    border-bottom-color: var(--text);
+}
+
+/* =========================
+   GROUP PICKER (Modal) — THEMED
+   ========================= */
+
+.group-modal[hidden],
+.group-backdrop[hidden] {
+    display: none !important;
+}
+
+.group-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.group-modal {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 1001;
+    padding: 22px;
+}
+
+.group-modal-card {
+    width: min(720px, calc(100vw - 44px));
+    background: var(--card); /* theme-aware */
+    color: var(--text); /* theme-aware */
+    border: 1px solid var(--border); /* theme-aware */
+    border-radius: 22px;
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.45);
+    padding: 26px 26px 18px;
+    backdrop-filter: blur(10px);
+}
+
+.group-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.group-modal-title {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.group-close {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.group-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 6px;
+}
+
+.group-item {
+    text-decoration: none;
+    color: var(--text);
+    font-size: 22px;
+    font-weight: 600;
+    padding: 12px 10px;
+    border-radius: 14px;
+}
+
+.group-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.group-item.active {
+    color: #3b82f6;
+    font-weight: 800;
+}
+
+/* Title-like trigger button */
+.group-trigger {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+
+    border: 0;
+    background: transparent;
+    padding: 0;
+
+    color: var(--text);
+    cursor: pointer;
+
+    font-family: inherit;
+}
+
+.group-trigger-text {
+    font-size: 28px; /* match your title scale */
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.group-trigger-caret {
+    font-size: 18px;
+    font-weight: 900;
+    opacity: 0.9;
+    transform: translateY(-6px); /* aligns caret with headline */
+}
+
+.group-trigger:hover .group-trigger-caret {
+    opacity: 1;
+}
+
+.group-trigger:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.9);
+    outline-offset: 6px;
+    border-radius: 10px;
 }
 
 .nav {
@@ -108,7 +255,7 @@ body {
 
 .sidebar-toggle {
     margin-left: 12px;
-    padding: 6px 10px;
+    padding: 6px 10px 10px 10px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: rgba(255, 255, 255, 0.12);

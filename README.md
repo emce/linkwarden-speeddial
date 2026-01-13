@@ -1,9 +1,10 @@
 # Linkwarden Speed Dial
 A Speed Dial page for browser based on data from Linkwarden (a bit familiar to speeddial2.com).
-Links are created based on selected collection.
+Links are created based on selected collections.
 
 ## Features
 
+- Collections chooser (based on configuration) - based on specific link one can set different collection on different device as speed dial.
 - Theme support (auto/dark/light)
 - Background setting (image via url/color)
 - Bookmarks sidebar (based on data from Linkwarden)
@@ -21,8 +22,8 @@ LINKWARDEN_URL=https://linkwarden.example
 LINKWARDEN_USERNAME=username
 LINKWARDEN_TOKEN=
 LINKWARDEN_PASSWORD=
-### number from link, like https://linkwarden.example/collections/50
-LINKWARDEN_COLLECTION=50
+### number (or numbers, if you want additional tabs) from link, like https://linkwarden.example/collections/50
+LINKWARDEN_COLLECTION=[50,51]
 LINKWARDEN_COLLECTION_NAME="Linkwarden SpeedDial"
 LINKWARDEN_COLLECTION_COLUMNS=(4-12)
 LINKWARDEN_COLLECTION_SPACING=(4-36)
@@ -55,6 +56,41 @@ This is single user application, to make your data secure, use `SPEEDDIAL_PASSWO
 ![Sidebar](images/screen_2.png)
 
 ![Password](images/screen_3.png)
+
+## Deployment
+
+You can build this app as docker or podman image, here's Dockerfile to build image:
+```dockerfile
+FROM python:3.14-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+EXPOSE 9018
+
+CMD ["python", "app.py"]
+```
+
+And here's example compose file code:
+```yaml
+services:
+    tools:
+        container_name: linkwarden-speeddial
+        build:
+            context: .
+            dockerfile: Dockerfile
+        env_file:
+            - .env
+        ports:
+            - "9018:9018"
+        volumes:
+            - ./:/code
+```
 
 ## Development
 

@@ -331,3 +331,32 @@
         }
     })();
 })();
+
+(function () {
+  const btn = document.getElementById("groupBtn");
+  const modal = document.getElementById("groupModal");
+  const backdrop = document.getElementById("groupBackdrop");
+  const closeBtn = document.getElementById("groupClose");
+
+  if (!btn || !modal || !backdrop || !closeBtn) return;
+
+  function openModal() {
+    modal.hidden = false;
+    backdrop.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    backdrop.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+  }
+
+  btn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+  backdrop.addEventListener("click", closeModal);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+})();
